@@ -1,0 +1,5 @@
+image:
+  tag: master
+
+ingress:
+  host: my-app.com
