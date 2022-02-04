@@ -75,7 +75,7 @@ CMD ["/app/app"]
 ```
 Базовый образ apline весит гораздо меньше, чем базовый образ golang:1.14. Поэтому из golang:1.14 передается лишь только исполняемый файл. За счет чего достигается следующий результат:
 
-![alt text](/blob/master/pmg/1.PNG?raw=true)
+![alt text](/pmg/1.PNG?raw=true)
 
 
  ```
@@ -94,7 +94,7 @@ CMD ["/app/app"]
 
 Также можно добавить флаги `RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags "-s -w -extldflags '-static'" -o ./app`. Сократит образ еще на пару mb.
 
-![alt text](/blob/master/pmg/2.PNG?raw=true)
+![alt text](/pmg/2.PNG?raw=true)
 
 
 Также в данном варианте, при go build каждый раз будут загружаться  зависимости. И еслиб их было много, то сильно замедлило процесс сборки образа. 
