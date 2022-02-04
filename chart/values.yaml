@@ -1,5 +1,21 @@
+AppPort: 80 
+storage: nfs
+replicaCount: 2
+
 image:
   tag: master
 
 ingress:
   host: my-app.com
+
+service:
+  port: 80
+  targetPort: 80
+
+resources:
+   limits:
+     cpu: 200m
+     memory: 256Mi
+   requests:
+     cpu: 100m
+     memory: 128Mi

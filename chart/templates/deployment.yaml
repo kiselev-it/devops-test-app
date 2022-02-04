@@ -2,31 +2,56 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
-      app: my-app
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: my-app
+        app: {{ .Release.Name }}
     spec:
       containers:
-        - name: my-app
+        - name: {{ .Release.Name }}
           image: quay.csssr.cloud/csssr/test-app:{{ .Values.image.tag }}
           imagePullPolicy: Always
           env:
             - name: PORT
-              value: "80"
+              value: "{{ .Values.AppPort }}"
             - name: IMAGE_PATH
               value: /data/image
           ports:
-            - containerPort: 80
+            - name: {{ .Release.Name }}
+              containerPort: {{ .Values.AppPort }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /healthz/liveness
+              port: {{ .Values.AppPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz/readiness
+              port: {{ .Values.AppPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      imagePullSecrets:
+      - name: private-registry  
           volumeMounts:
             - name: data
-              mountPath: /data
+              mountPath: /datart
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: my-app
+            claimName: {{ .Release.Name }}
+
